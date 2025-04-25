@@ -1,36 +1,16 @@
 import { ethers } from 'ethers';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
 import ABI from "../../../../../contracts/certificate.json";
+import { NextResponse } from 'next/server';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+export async function POST(
+  req: Request,
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return NextResponse.json({ error: 'Method not allowed' }, {status: 405});
   }
 
   try {
-  /*
-  recipientIIN;
-  recipientNameAndSurname
-  issuerType
-  issuerIIN
-  issuerNameAndSurname
-  organisationName
-  BIN
-  certificateTheme
-  certificateBody
-  dateOfIssue
-  */
-  /*
-  iinRecipient,
-      certificateTheme,
-      certificateBody,
-      issuerType,
-      issuerData
-  */
     const {
       recipientIIN,
       issuerType,
@@ -40,7 +20,18 @@ export default async function handler(
       certificateTheme,
       certificateBody,
       dateOfIssue
-    } = req.body;
+    } = await req.json();
+
+    console.log(recipientIIN,
+      issuerType,
+      issuerIIN,
+      organisationName,
+      BIN,
+      certificateTheme,
+      certificateBody,
+      dateOfIssue);
+
+    console.log(req.body);
 
     const recipient = await prisma.user.findUnique({
       where: {
@@ -69,7 +60,7 @@ export default async function handler(
 
     let issuerHash: string;
     let dbData;
-    if (issuerType === 'PERSON') {
+    if (issuerType.toUpperCase() === 'PERSON') {
       issuerHash = ethers.keccak256(
         ethers.toUtf8Bytes(
           `${issuerIIN}${issuer?.name}${issuer?.surname}`
@@ -77,11 +68,11 @@ export default async function handler(
       );
       dbData = {
         recipientIIN,
-        issuerType,
+        issuerType: issuerType.toUpperCase(),
         issuerIIN,
         certificateTheme,
         certificateBody,
-        dateOfIssue
+        dateOfIssue: new Date(dateOfIssue)
       }
     } else {
       issuerHash = ethers.keccak256(
@@ -91,13 +82,13 @@ export default async function handler(
       );
       dbData = {
         recipientIIN,
-        issuerType,
+        issuerType: issuerType.toUpperCase(),
         issuerIIN,
         organisationName,
         BIN,
         certificateTheme,
         certificateBody,
-        dateOfIssue
+        dateOfIssue: new Date(dateOfIssue)
       }
     }
 
@@ -115,11 +106,13 @@ export default async function handler(
       wallet
     );
 
+    console.log(process.env.ETHEREUM_RPC_URL, process.env.ETHEREUM_PRIVATE_KEY, process.env.CERTIFICATE_CONTRACT_ADDRESS)
+
     const tx = await contract.issueCertificate(
       certificate.id,
       recipientIIN,
       issuerIIN,
-      issuerType,
+      (issuerType.toUpperCase() === "PERSON" ? 0 : 1),
       issuerHash,
       certificateHash,
       Math.floor(Date.now() / 1000)
@@ -128,16 +121,18 @@ export default async function handler(
     await tx.wait();
 
     // 5. Generate certificate URL
-    const certificateUrl = `${req.headers.origin}/certificates/${certificate.id}`;
+    // const certificateUrl = `${req.headers.get(origin)}/certificates/${certificate.id}`;
 
-    res.status(201).json({
+    const certificateUrl = `http://localhost:300/api/certificates/${certificate.id}`;
+
+    return NextResponse.json({
       success: true,
       certificateId: certificate.id,
       txHash: tx.hash,
       certificateUrl,
-    });
+    }, {status: 201});
   } catch (error) {
     console.error('Error issuing certificate:', error);
-    res.status(500).json({ error });
+    return NextResponse.json({ error }, {status: 500});
   }
 }

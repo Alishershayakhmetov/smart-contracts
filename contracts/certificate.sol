@@ -64,6 +64,47 @@ contract CertificateRegistry {
         );
     }
 
+    // Get basic certificate info
+    function getCertificate(
+        string memory _certificateId
+    )
+        public
+        view
+        returns (
+            string memory certificateId,
+            string memory recipientIIN,
+            string memory issuerIIN,
+            IssuerType issuerType,
+            string memory issuerHash,
+            string memory certificateHash,
+            uint256 dateOfIssue
+        )
+    {
+        Certificate memory cert = certificates[_certificateId];
+        require(bytes(cert.certificateId).length > 0, "Certificate not found");
+
+        return (
+            cert.certificateId,
+            cert.recipientIIN,
+            cert.issuerIIN,
+            cert.issuerType,
+            cert.issuerHash,
+            cert.certificateHash,
+            cert.dateOfIssue
+        );
+    }
+
+    // Get transaction hash separately
+    function getCertificateTxHash(
+        string memory _certificateId
+    ) public view returns (string memory) {
+        require(
+            bytes(certificates[_certificateId].certificateId).length > 0,
+            "Certificate not found"
+        );
+        return certificateIdToTx[_certificateId];
+    }
+
     function txHashToString() internal view returns (string memory) {
         bytes32 txHash = blockhash(block.number - 1);
         return bytes32ToString(txHash);

@@ -122,6 +122,74 @@
 				"internalType": "string",
 				"name": "_certificateId",
 				"type": "string"
+			}
+		],
+		"name": "getCertificate",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "certificateId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "recipientIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "issuerIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "enum CertificateRegistry.IssuerType",
+				"name": "issuerType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "string",
+				"name": "issuerHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "certificateHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "dateOfIssue",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_certificateId",
+				"type": "string"
+			}
+		],
+		"name": "getCertificateTxHash",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_certificateId",
+				"type": "string"
 			},
 			{
 				"internalType": "string",

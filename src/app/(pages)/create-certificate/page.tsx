@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function CreateCertificatePage() {
   const [recipientIIN, setRecipientIIN] = useState("");
@@ -43,7 +44,7 @@ export default function CreateCertificatePage() {
     setOpenSnackbar(false);
   };
 
-  const handleIssueCertificate = () => {
+  const handleIssueCertificate = async () => {
     setError("");
     setSuccess("");
 
@@ -61,6 +62,28 @@ export default function CreateCertificatePage() {
     }
 
     try {
+      const data =
+        issuerType === "PERSON"
+          ? {
+              recipientIIN,
+              issuerType,
+              issuerIIN,
+              certificateTheme,
+              certificateBody,
+              dateOfIssue,
+            }
+          : {
+              recipientIIN,
+              issuerType,
+              issuerIIN,
+              organisationName,
+              BIN,
+              certificateTheme,
+              certificateBody,
+              dateOfIssue,
+            };
+      const response = await axios.post("/api/certificates", data);
+      console.log(response);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Signing Certificate failed";
