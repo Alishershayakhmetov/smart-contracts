@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Certificate" ALTER COLUMN "organisationName" DROP NOT NULL,
+ALTER COLUMN "BIN" DROP NOT NULL;

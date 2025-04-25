@@ -19,6 +19,7 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log(credentials?.email, credentials?.password)
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required');
         }
@@ -26,7 +27,7 @@ const handler = NextAuth({
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
-
+        console.log(user)
         if (!user || !user.password) {
           throw new Error('Invalid credentials');
         }
@@ -39,8 +40,7 @@ const handler = NextAuth({
         return {
           id: user.id,
           name: user.name,
-          email: user.email,
-          image: user.image
+          email: user.email
         };
       }
     })

@@ -1,0 +1,162 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "certificateId",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "recipientIIN",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "issuerIIN",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum CertificateRegistry.IssuerType",
+				"name": "issuerType",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "issuerHash",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "certificateHash",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "dateOfIssue",
+				"type": "uint256"
+			}
+		],
+		"name": "CertificateIssued",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "certificateIdToTx",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "certificates",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "certificateId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "recipientIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "issuerIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "enum CertificateRegistry.IssuerType",
+				"name": "issuerType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "string",
+				"name": "issuerHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "certificateHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "dateOfIssue",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_certificateId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_recipientIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_issuerIIN",
+				"type": "string"
+			},
+			{
+				"internalType": "enum CertificateRegistry.IssuerType",
+				"name": "_issuerType",
+				"type": "uint8"
+			},
+			{
+				"internalType": "string",
+				"name": "_issuerHash",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_certificateHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_dateOfIssue",
+				"type": "uint256"
+			}
+		],
+		"name": "issueCertificate",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

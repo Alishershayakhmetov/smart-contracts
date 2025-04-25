@@ -12,6 +12,9 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [IIN, setIIN] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -32,7 +35,7 @@ export default function LoginPage() {
     setError("");
     setSuccess("");
 
-    if (!email || !password) {
+    if (!email || !password || !name || !surname || !IIN) {
       setError("Please fill in all fields");
       setOpenSnackbar(true);
       return;
@@ -53,6 +56,9 @@ export default function LoginPage() {
         body: JSON.stringify({
           email,
           password,
+          name,
+          surname,
+          IIN,
         }),
       });
 
@@ -166,6 +172,111 @@ export default function LoginPage() {
             placeholder="Enter your password..."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              sx: { color: "white" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "white",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+              input: { color: "white" },
+            }}
+          />
+        </div>
+
+        <div>
+          <Typography
+            variant="body2"
+            className="mb-1"
+            sx={{ color: "#5c5f61" }}
+          >
+            Name
+          </Typography>
+          <TextField
+            variant="outlined"
+            fullWidth
+            type="text"
+            placeholder="Enter your name..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            InputProps={{
+              sx: { color: "white" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "white",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+              input: { color: "white" },
+            }}
+          />
+        </div>
+
+        <div>
+          <Typography
+            variant="body2"
+            className="mb-1"
+            sx={{ color: "#5c5f61" }}
+          >
+            Surname
+          </Typography>
+          <TextField
+            variant="outlined"
+            fullWidth
+            type="text"
+            placeholder="Enter your surname..."
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+            InputProps={{
+              sx: { color: "white" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "white",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "white",
+                },
+              },
+              input: { color: "white" },
+            }}
+          />
+        </div>
+
+        <div>
+          <Typography
+            variant="body2"
+            className="mb-1"
+            sx={{ color: "#5c5f61" }}
+          >
+            IIN
+          </Typography>
+          <TextField
+            variant="outlined"
+            fullWidth
+            type="text"
+            placeholder="Enter your IIN..."
+            value={IIN}
+            onChange={(e) => setIIN(e.target.value)}
             InputProps={{
               sx: { color: "white" },
             }}
