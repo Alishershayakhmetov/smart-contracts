@@ -3,11 +3,9 @@ import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { contract } from '@/lib/ethereum';
 
-export async function POST(
-  req: Request,
-) {
+export async function POST(req: Request) {
   if (req.method !== 'POST') {
-    return NextResponse.json({ error: 'Method not allowed' }, {status: 405});
+    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   }
 
   try {
@@ -22,47 +20,53 @@ export async function POST(
       dateOfIssue
     } = await req.json();
 
-    const {recipient, issuer} = await getUsers(recipientIIN, issuerIIN);
+    // Validate users first
+    const { recipient, issuer } = await getUsers(recipientIIN, issuerIIN);
     if (!recipient || !issuer) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const {certificateHash, issuerHash} = generateHashes({issuerType, certificateTheme, certificateBody, issuerIIN, issuer, BIN, organisationName});
+    // Generate hashes
+    const { certificateHash, issuerHash } = generateHashes({
+      issuerType, 
+      certificateTheme, 
+      certificateBody, 
+      issuerIIN, 
+      issuer, 
+      BIN, 
+      organisationName
+    });
 
-    const dbData = generateDBData({recipientIIN,
+    // Prepare DB data
+    const dbData = generateDBData({
+      recipientIIN,
       issuerType,
       issuerIIN,
       organisationName,
       BIN,
       certificateTheme,
       certificateBody,
-      dateOfIssue});
-
-    // Store in db
-    const certificate = await prisma.certificate.create({
-      data: dbData,
+      dateOfIssue
     });
 
-    const tx = await contract.issueCertificate(
-      certificate.id,
+    // Transaction wrapper
+    const result = await executeAtomicOperation({
+      dbData,
       recipientIIN,
       issuerIIN,
-      (issuerType.toUpperCase() === "PERSON" ? 0 : 1),
+      issuerType,
       issuerHash,
-      certificateHash,
-      Math.floor(Date.now() / 1000)
-    );
+      certificateHash
+    });
 
-    await tx.wait();
+    return NextResponse.json(result, { status: 201 });
 
-    return NextResponse.json({
-      success: true,
-      certificateId: certificate.id,
-      tx
-    }, {status: 201});
   } catch (error) {
     console.error('Error issuing certificate:', error);
-    return NextResponse.json({ error }, {status: 500});
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Operation failed' },
+      { status: 500 }
+    );
   }
 }
 
@@ -154,5 +158,55 @@ const generateDBData = ({recipientIIN,issuerType,issuerIIN,organisationName,BIN,
       certificateBody,
       dateOfIssue: new Date(dateOfIssue)
     }
+  }
+}
+
+// Atomic operation handler
+async function executeAtomicOperation(params: {
+  dbData: any;
+  recipientIIN: string;
+  issuerIIN: string;
+  issuerType: string;
+  issuerHash: string;
+  certificateHash: string;
+}) {
+  let certificate: any;
+
+  try {
+    // 1. First create in database
+    certificate = await prisma.certificate.create({
+      data: params.dbData,
+    });
+
+    // 2. Then execute blockchain operation
+    const tx = await contract.issueCertificate(
+      certificate.id,
+      params.recipientIIN,
+      params.issuerIIN,
+      (params.issuerType.toUpperCase() === "PERSON" ? 0 : 1),
+      params.issuerHash,
+      params.certificateHash,
+      Math.floor(Date.now() / 1000)
+    );
+
+    await tx.wait();
+
+    return {
+      success: true,
+      certificateId: certificate.id,
+      txHash: tx.hash
+    };
+
+  } catch (error) {
+    console.error('Atomic operation failed:', error);
+    
+    // Rollback database if certificate was created but blockchain failed
+    if (certificate?.id) {
+      await prisma.certificate.delete({
+        where: { id: certificate.id }
+      }).catch(console.error);
+    }
+
+    throw error; // Re-throw for outer catch block
   }
 }
