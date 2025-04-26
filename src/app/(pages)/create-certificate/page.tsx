@@ -82,7 +82,7 @@ export default function CreateCertificatePage() {
               certificateBody,
               dateOfIssue,
             };
-      const response = await axios.post("/api/certificates", data);
+      const response = await axios.post("/api/certificate", data);
       console.log(response);
     } catch (err) {
       const errorMessage =

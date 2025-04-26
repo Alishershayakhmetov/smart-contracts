@@ -1,6 +1,5 @@
 "use client";
 import { Alert, Button, Snackbar, TextField, Typography } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -70,18 +69,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    const result = await signIn("google", {
-      redirect: false,
-      callbackUrl: "/",
-    });
-
-    if (result?.error) {
-      setError(result.error);
-      setOpenSnackbar(true);
-    }
-  };
-
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-black"
@@ -108,25 +95,6 @@ export default function LoginPage() {
             {error || success}
           </Alert>
         </Snackbar>
-        <Button
-          variant="contained"
-          startIcon={<GoogleIcon />}
-          fullWidth
-          sx={{
-            backgroundColor: "white",
-            color: "black",
-            "&:hover": {
-              backgroundColor: "#e0e0e0",
-            },
-            textTransform: "none",
-            fontWeight: 500,
-            marginBottom: "1rem",
-          }}
-          onClick={handleGoogleSignIn}
-        >
-          Continue with Google
-        </Button>
-
         <div>
           <Typography
             variant="body2"

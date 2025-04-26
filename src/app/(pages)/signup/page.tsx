@@ -1,11 +1,9 @@
 "use client";
 import { Alert, Button, Snackbar, TextField, Typography } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import bcrypt from "bcryptjs";
+import axios from "axios";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,24 +46,16 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-          surname,
-          IIN,
-        }),
+      const response = await axios.post("/api/auth/register", {
+        email,
+        password,
+        name,
+        surname,
+        IIN,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
+      if (response.status !== 200) {
+        throw new Error(response.data || "Registration failed");
       }
 
       // Redirect to login with success message
@@ -104,24 +94,6 @@ export default function LoginPage() {
             {error || success}
           </Alert>
         </Snackbar>
-        <Button
-          variant="contained"
-          startIcon={<GoogleIcon />}
-          fullWidth
-          sx={{
-            backgroundColor: "white",
-            color: "black",
-            "&:hover": {
-              backgroundColor: "#e0e0e0",
-            },
-            textTransform: "none",
-            fontWeight: 500,
-            marginBottom: "1rem",
-          }}
-          onClick={() => signIn("google", { callbackUrl: "/" })}
-        >
-          Continue with Google
-        </Button>
 
         <div>
           <Typography

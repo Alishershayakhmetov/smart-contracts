@@ -8,13 +8,14 @@ export async function POST(request: Request) {
 
     const existingUser = await prisma.user.findUnique({
       where: { 
-        iin: IIN 
+        iin: IIN,
+        email
       },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'IIN already in use' },
+        { error: 'IIN or Email already in use' },
         { status: 400 }
       );
     }
