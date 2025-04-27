@@ -15,30 +15,20 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(cuid())
+  id       String @id @default(cuid())
   name     String
   surname  String
-  email    String    @unique
+  email    String @unique
   password String
-  sessions Session[]
 
   iin                  String?       @unique
   issuedCertificates   Certificate[] @relation("IssuedCertificates")
   receivedCertificates Certificate[] @relation("ReceivedCertificates")
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model Certificate {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   recipientIIN String
   recipient    User   @relation("ReceivedCertificates", fields: [recipientIIN], references: [iin])
@@ -61,5 +51,5 @@ model Certificate {
 
 enum IssuerType {
   PERSON
-  ORGANIZATION
+  ORGANISATION
 }

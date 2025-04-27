@@ -14,8 +14,16 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Header from "@/components/header";
 
 export default function CreateCertificatePage() {
+  const { data: session, status } = useSession();
+  if (status === "unauthenticated") {
+    redirect("/login");
+  }
+
   const [recipientIIN, setRecipientIIN] = useState("");
 
   const [issuerType, setIssuerType] = useState("");
@@ -94,30 +102,7 @@ export default function CreateCertificatePage() {
 
   return (
     <main className="min-h-screen bg-[#0B0F0C] text-white px-4 py-8">
-      {/* Header */}
-      <header className="flex justify-between items-center bg-[#0B0F0C] px-6 py-4 border border-gray-700 rounded-xl max-w-5xl mx-auto mb-12">
-        <div className="flex items-center space-x-1 text-xl font-semibold">
-          <span className="bg-lime-500 text-black px-1 rounded">Smart</span>
-          <span>Contracts</span>
-        </div>
-        <nav className="flex items-center gap-8 text-sm">
-          <Link href="#" className="hover:text-lime-400">
-            Home
-          </Link>
-          <Link href="#" className="text-lime-400">
-            Create Certificate
-          </Link>
-          <Link href="#">About us</Link>
-        </nav>
-        <Link href="signup" className="text-lime-400">
-          <Button
-            variant="outlined"
-            className="text-lime-400 border-lime-400 hover:bg-lime-400 hover:text-black transition-all"
-          >
-            Sign up
-          </Button>
-        </Link>
-      </header>
+      <Header />
 
       {/* Main Heading */}
       <h1 className="text-center text-3xl font-bold text-lime-400 mb-12 border border-lime-400 py-4 max-w-md mx-auto rounded-md">

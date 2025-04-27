@@ -2,6 +2,9 @@ import { ethers } from 'ethers';
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { contract } from '@/lib/ethereum';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { IssuerType } from '@/generated/prisma';
 
 export async function POST(req: Request) {
   if (req.method !== 'POST') {
@@ -70,6 +73,48 @@ export async function POST(req: Request) {
   }
 }
 
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get user's IIN from the database
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { iin: true }
+    });
+
+    if (!user?.iin) {
+      return NextResponse.json({ error: 'User IIN not found' }, { status: 404 });
+    }
+
+    // Find all certificates where the user is either issuer or recipient
+    const certificates = await prisma.certificate.findMany({
+      where: {
+        OR: [
+          { issuerIIN: user.iin },
+          { recipientIIN: user.iin }
+        ]
+      },
+      orderBy: {
+        dateOfIssue: 'desc'
+      }
+    });
+
+    return NextResponse.json(certificates);
+    
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch certificates' },
+      { status: 500 }
+    );
+  }
+}
+
 const getUsers = async (recipientIIN: string, issuerIIN: string) => {
   const recipient = await prisma.user.findUnique({
     where: {
@@ -118,11 +163,6 @@ const generateHashes = ({issuerType, certificateTheme, certificateBody, issuerII
   return {certificateHash, issuerHash}
 }
 
-enum IssuerType {
-  PERSON = "PERSON",
-  ORGANIZATION = "ORGANIZATION"
-}
-
 const generateDBData = ({recipientIIN,issuerType,issuerIIN,organisationName,BIN,certificateTheme,certificateBody,dateOfIssue} : {recipientIIN: string,issuerType: string,issuerIIN: string,organisationName: string,BIN: string,certificateTheme: string,certificateBody: string,dateOfIssue: string}) : {
   recipientIIN: string;
   issuerType: IssuerType;
@@ -134,7 +174,7 @@ const generateDBData = ({recipientIIN,issuerType,issuerIIN,organisationName,BIN,
   dateOfIssue: Date;
 } => {
 
-  const prismaIssuerType = issuerType.toUpperCase() === 'PERSON' ? IssuerType.PERSON : IssuerType.ORGANIZATION;
+  const prismaIssuerType = issuerType.toUpperCase() === 'PERSON' ? IssuerType.PERSON : IssuerType.ORGANISATION;
 
   if (prismaIssuerType === IssuerType.PERSON) {
     return {
@@ -161,8 +201,43 @@ const generateDBData = ({recipientIIN,issuerType,issuerIIN,organisationName,BIN,
   }
 }
 
-// Atomic operation handler
 async function executeAtomicOperation(params: {
+  dbData: any;
+  recipientIIN: string;
+  issuerIIN: string;
+  issuerType: string;
+  issuerHash: string;
+  certificateHash: string;
+}) {
+  return await prisma.$transaction(async (prisma) => {
+    // 1. First create in database
+    const certificate = await prisma.certificate.create({
+      data: params.dbData,
+    });
+
+    // 2. Then execute blockchain operation
+    const tx = await contract.issueCertificate(
+      certificate.id,
+      params.recipientIIN,
+      params.issuerIIN,
+      (params.issuerType.toUpperCase() === "PERSON" ? 0 : 1),
+      params.issuerHash,
+      params.certificateHash,
+      Math.floor(Date.now() / 1000)
+    );
+
+    await tx.wait();
+
+    return {
+      success: true,
+      certificateId: certificate.id,
+      txHash: tx.hash
+    };
+  });
+}
+
+// Atomic operation handler
+async function executeAtomicOperationTest(params: {
   dbData: any;
   recipientIIN: string;
   issuerIIN: string;

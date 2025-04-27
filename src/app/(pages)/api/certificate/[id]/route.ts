@@ -2,32 +2,7 @@ import { ethers } from 'ethers';
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { contract } from '@/lib/ethereum';
-
-interface CertificateResponse {
-  certificateDatafromDB: any;
-  serializableCertData: Record<string, any>;
-  certificateHash: string;
-  issuerHash: string;
-  verification: {
-    issuerHashValid: boolean;
-    certificateHashValid: boolean;
-  };
-}
-
-interface CertificateDBData {
-  id: string;
-  issuerType: 'PERSON' | 'ORGANIZATION';
-  issuerIIN: string;
-  certificateTheme: string;
-  certificateBody: string;
-  BIN?: string | null;
-  organisationName?: string | null;
-  issuer: {
-    name: string;
-    surname: string;
-  };
-  recipient: any;
-}
+import { CertificateDBData, CertificateResponse } from '@/interfaces/interface';
 
 const extractCertificateId = (url: string): string | null => {
   const parts = url.split('/');
@@ -52,7 +27,7 @@ const fetchCertificateFromDB = async (certificateId: string) => {
 					iin: true
         }
       }
-    },
+    }
   });
 };
 
@@ -97,14 +72,25 @@ const verifyCertificate = (
   
   const issuerHash = generateIssuerHash(dbData);
 
+  if(issuerHash !== blockchainData['4'] || certificateHash !== blockchainData['5']) {
+    return {
+      error: "hashes are not matching",
+      verification: {
+        certificateHash,
+        issuerHash,
+        smartContractIssuerHash: blockchainData['4'],
+        smartContractCertificateHash: blockchainData['5'],
+      }
+    }
+  }
+
   return {
-    certificateDatafromDB: dbData,
-    serializableCertData: blockchainData,
-    certificateHash,
-    issuerHash,
+    certificateDataFromDB: dbData,
     verification: {
-      issuerHashValid: issuerHash === blockchainData['4'],
-      certificateHashValid: certificateHash === blockchainData['5']
+      certificateHash,
+      issuerHash,
+      smartContractIssuerHash: blockchainData['4'],
+      smartContractCertificateHash: blockchainData['5'],
     }
   };
 };
