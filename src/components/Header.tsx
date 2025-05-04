@@ -12,7 +12,7 @@ export default function Header() {
     const router = useRouter();
 
     return (
-        <header className="flex justify-between items-center p-5 bg-[#4d4d4d10] rounded-lg border-[#444444] backdrop-blur-xl border-[3px] absolute container left-1/2 -translate-x-1/2 top-12">
+        <header className="flex justify-between items-center p-5 bg-[#4d4d4d10] rounded-lg border-borderdefault backdrop-blur-xl border-[3px] absolute container left-1/2 -translate-x-1/2 top-12">
             <Logo />
             <nav>
                 <ul className="flex items-center gap-12">
