@@ -5,7 +5,7 @@ import axios from "axios";
 import { Button, CircularProgress, Typography, Alert } from "@mui/material";
 import Link from "next/link";
 import { CertificateDetails } from "@/interfaces/interface";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 
 export default function CertificateDetailPage() {
   const { id } = useParams();

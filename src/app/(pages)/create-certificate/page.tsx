@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 
 export default function CreateCertificatePage() {
   const { data: session, status } = useSession();

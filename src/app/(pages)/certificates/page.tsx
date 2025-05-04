@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CertificatesLoading from "@/components/certificateLoading";
 import { Certificate } from "@/interfaces/interface";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 
 export default function AllUserCertificatesPage() {
   const { data: session, status } = useSession();
