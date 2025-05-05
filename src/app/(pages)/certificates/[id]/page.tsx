@@ -74,7 +74,7 @@ export default function CertificateDetailPage() {
       {/* Header (same as your other page) */}
       <Header />
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto mt-[150]">
         {/* Certificate Details */}
         <div className="border border-gray-700 rounded-lg p-6 mb-8">
           <h1 className="text-2xl font-bold text-lime-400 mb-4">

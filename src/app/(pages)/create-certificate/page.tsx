@@ -105,7 +105,7 @@ export default function CreateCertificatePage() {
       <Header />
 
       {/* Main Heading */}
-      <h1 className="text-center text-3xl font-bold text-lime-400 mb-12 border border-lime-400 py-4 max-w-md mx-auto rounded-md">
+      <h1 className="text-center text-3xl font-bold text-lime-400 mb-12 border border-lime-400 py-4 max-w-md mx-auto rounded-md mt-[150]">
         Create Certificate
       </h1>
 
@@ -307,7 +307,20 @@ export default function CreateCertificatePage() {
         </div>
       </Box>
 
-      <Button onClick={handleIssueCertificate}>Issue Certificate</Button>
+      <div className="flex justify-center mt-6">
+        <Button
+          variant="contained"
+          onClick={handleIssueCertificate}
+          sx={{
+            backgroundColor: "#4CAF50",
+            "&:hover": {
+              backgroundColor: "#45a049",
+            },
+          }}
+        >
+          Issue Certificate
+        </Button>
+      </div>
     </main>
   );
 }

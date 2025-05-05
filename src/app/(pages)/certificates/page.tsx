@@ -44,7 +44,7 @@ export default function AllUserCertificatesPage() {
       <Header />
 
       {/* Main Heading */}
-      <h1 className="text-center text-3xl font-bold text-lime-400 mb-12 border border-lime-400 py-4 max-w-md mx-auto rounded-md">
+      <h1 className="text-center text-3xl font-bold text-lime-400 mb-12 border border-lime-400 py-4 max-w-md mx-auto rounded-md mt-[150]">
         All Certificates
       </h1>
 
