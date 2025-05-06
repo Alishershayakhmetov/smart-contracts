@@ -20,6 +20,7 @@ model User {
   surname  String
   email    String @unique
   password String
+  isAdmin  Boolean @default(false)
 
   iin                  String?       @unique
   issuedCertificates   Certificate[] @relation("IssuedCertificates")
