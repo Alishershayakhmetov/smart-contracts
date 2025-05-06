@@ -74,9 +74,9 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-5">
-            <BigLogo/>
+            <BigLogo />
             <h1 className="text-5xl mt-12">Sign in</h1>
-            <div className="p-6 border border-borderdefault rounded-lg w-80 space-y-4 text-white gap-6">
+            <div className="p-6 border border-borderdefault rounded-lg w-80 space-y-4 gap-6">
                 <Snackbar
                     open={openSnackbar}
                     autoHideDuration={6000}
@@ -99,28 +99,6 @@ export default function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    {/* <TextField
-                        placeholder="Enter your email..."
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        InputProps={{
-                            sx: { color: "white" },
-                        }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& fieldset": {
-                                    borderColor: "gray",
-                                },
-                                "&:hover fieldset": {
-                                    borderColor: "white",
-                                },
-                                "&.Mui-focused fieldset": {
-                                    borderColor: "white",
-                                },
-                            },
-                            input: { color: "white" },
-                        }}
-                    /> */}
                 </div>
                 <div>
                     <span>Password</span>
@@ -130,31 +108,6 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    {/* <TextField
-                        variant="outlined"
-                        fullWidth
-                        type="password"
-                        placeholder="Enter your password..."
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                            sx: { color: "white" },
-                        }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& fieldset": {
-                                    borderColor: "gray",
-                                },
-                                "&:hover fieldset": {
-                                    borderColor: "white",
-                                },
-                                "&.Mui-focused fieldset": {
-                                    borderColor: "white",
-                                },
-                            },
-                            input: { color: "white" },
-                        }}
-                    /> */}
                 </div>
                 <div className="w-full [&>button]:w-full">
                     <Button onClick={() => handleSubmit()} title="Sign in" />
