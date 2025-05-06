@@ -8,7 +8,6 @@ import ProfileDropdown from "./ProfileDropdown";
 
 export default function Header() {
   const { data: session, status } = useSession();
-  console.log("🚀 ~ Header ~ session:", session);
   const pathname = usePathname();
   const router = useRouter();
 
