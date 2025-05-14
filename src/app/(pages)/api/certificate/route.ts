@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     });
 
     // Transaction wrapper
-    const result = await executeAtomicOperation({
+    const result = await createRecordsInDBAndSmartContract({
       dbData,
       recipientIIN,
       issuerIIN,
@@ -201,43 +201,8 @@ const generateDBData = ({recipientIIN,issuerType,issuerIIN,organisationName,BIN,
   }
 }
 
-async function executeAtomicOperation(params: {
-  dbData: any;
-  recipientIIN: string;
-  issuerIIN: string;
-  issuerType: string;
-  issuerHash: string;
-  certificateHash: string;
-}) {
-  return await prisma.$transaction(async (prisma) => {
-    // 1. First create in database
-    const certificate = await prisma.certificate.create({
-      data: params.dbData,
-    });
-
-    // 2. Then execute blockchain operation
-    const tx = await contract.issueCertificate(
-      certificate.id,
-      params.recipientIIN,
-      params.issuerIIN,
-      (params.issuerType.toUpperCase() === "PERSON" ? 0 : 1),
-      params.issuerHash,
-      params.certificateHash,
-      Math.floor(Date.now() / 1000)
-    );
-
-    await tx.wait();
-
-    return {
-      success: true,
-      certificateId: certificate.id,
-      txHash: tx.hash
-    };
-  });
-}
-
 // Atomic operation handler
-async function executeAtomicOperationTest(params: {
+async function createRecordsInDBAndSmartContract(params: {
   dbData: any;
   recipientIIN: string;
   issuerIIN: string;
