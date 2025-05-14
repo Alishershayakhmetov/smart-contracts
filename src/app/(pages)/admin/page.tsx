@@ -108,8 +108,8 @@ export default function AdminPage() {
                 Admin Dashboard
             </h1>
 
-            <Box sx={{ width: "100%", maxWidth: 1200, margin: "0 auto" }}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <div className="w-full max-w-[1200px] mx-auto">
+                <div className="border-b border-divider">
                     <Tabs
                         value={activeTab}
                         onChange={handleTabChange}
@@ -129,17 +129,14 @@ export default function AdminPage() {
                         <Tab label="Users" />
                         <Tab label="Statistics" />
                     </Tabs>
-                </Box>
+                </div>
 
-                <Box
-                    sx={{ padding: 3 }}
-                    className="bg-[#4d4d4d10] border-borderdefault border-[3px] backdrop-blur-xl rounded-lg mt-4"
-                >
+                <div className="p-3 bg-[#4d4d4d10] border-borderdefault border-[3px] backdrop-blur-xl rounded-lg mt-4">
                     {activeTab === 0 && <CertificatesPanel />}
                     {activeTab === 1 && <UsersPanel />}
                     {activeTab === 2 && <StatisticsPanel />}
-                </Box>
-            </Box>
+                </div>
+            </div>
         </main>
     );
 }

@@ -1,26 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Button,
-    TextField,
-    InputAdornment,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Alert,
-    Snackbar,
-} from "@mui/material";
-import { Search } from "@mui/icons-material";
 import NoDataIcon from "../icons/NoDataIcon";
+import InputField from "../InputField";
+import Button from "../Button";
 
 interface Certificate {
     id: string;
@@ -42,11 +25,20 @@ export default function CertificatesPanel() {
         useState<Certificate | null>(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [error, setError] = useState("");
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     useEffect(() => {
         fetchCertificates();
     }, []);
+
+    useEffect(() => {
+        if (showError) {
+            const timer = setTimeout(() => {
+                setShowError(false);
+            }, 6000);
+            return () => clearTimeout(timer);
+        }
+    }, [showError]);
 
     const fetchCertificates = async () => {
         try {
@@ -58,11 +50,11 @@ export default function CertificatesPanel() {
                 setCertificates(data);
             } else {
                 setError(data.error || "Failed to fetch certificates");
-                setOpenSnackbar(true);
+                setShowError(true);
             }
         } catch (error) {
             setError("An error occurred while fetching certificates");
-            setOpenSnackbar(true);
+            setShowError(true);
         } finally {
             setLoading(false);
         }
@@ -75,10 +67,6 @@ export default function CertificatesPanel() {
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
-    };
-
-    const handleCloseSnackbar = () => {
-        setOpenSnackbar(false);
     };
 
     const filteredCertificates = certificates.filter(
@@ -100,149 +88,92 @@ export default function CertificatesPanel() {
     }
 
     return (
-        <div>
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-                <Alert
-                    onClose={handleCloseSnackbar}
-                    severity="error"
-                    sx={{ width: "100%" }}
-                >
-                    {error}
-                </Alert>
-            </Snackbar>
+        <div className="flex flex-col gap-5 p-5">
+            {/* Error notification */}
+            {showError && (
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+                    <div className="bg-red-800 text-white px-6 py-4 rounded-lg shadow-lg flex items-center">
+                        <span>{error}</span>
+                        <button
+                            onClick={() => setShowError(false)}
+                            className="ml-4 text-white hover:text-gray-200"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            )}
 
-            <div className="mb-6">
-                <TextField
-                    fullWidth
-                    variant="outlined"
+            <div>
+                <InputField
+                    type="text"
                     placeholder="Search certificates by title, ID, or IIN..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search sx={{ color: "#d9d9d9" }} />
-                            </InputAdornment>
-                        ),
-                        sx: { color: "#d9d9d9" },
-                    }}
-                    sx={{
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: "#4d4d4d" },
-                            "&:hover fieldset": { borderColor: "#8CD813" },
-                            "&.Mui-focused fieldset": {
-                                borderColor: "#8CD813",
-                            },
-                        },
-                    }}
                 />
             </div>
 
             {filteredCertificates.length > 0 ? (
-                <TableContainer
-                    component={Paper}
-                    sx={{ backgroundColor: "#2d2d2d", color: "#d9d9d9" }}
-                >
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-[#4d4d4d10] rounded-lg">
+                        <thead>
+                            <tr>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     ID
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                                </th>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     Title
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                                </th>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     Recipient IIN
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                                </th>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     Issuer IIN
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                                </th>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     Date
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        color: "#8CD813",
-                                        fontWeight: "bold",
-                                    }}
-                                >
+                                </th>
+                                <th className="px-6 py-3 text-left text-green font-bold">
                                     Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {filteredCertificates.map((certificate) => (
-                                <TableRow key={certificate.id}>
-                                    <TableCell sx={{ color: "#d9d9d9" }}>
+                                <tr
+                                    key={certificate.id}
+                                    className="border-t border-borderdefault"
+                                >
+                                    <td className="px-6 py-4">
                                         {certificate.id.substring(0, 8)}...
-                                    </TableCell>
-                                    <TableCell sx={{ color: "#d9d9d9" }}>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {certificate.certificateTheme}
-                                    </TableCell>
-                                    <TableCell sx={{ color: "#d9d9d9" }}>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {certificate.recipientIIN}
-                                    </TableCell>
-                                    <TableCell sx={{ color: "#d9d9d9" }}>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {certificate.issuerIIN}
-                                    </TableCell>
-                                    <TableCell sx={{ color: "#d9d9d9" }}>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         {new Date(
                                             certificate.dateOfIssue
                                         ).toLocaleDateString()}
-                                    </TableCell>
-                                    <TableCell>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         <Button
-                                            variant="contained"
                                             onClick={() =>
                                                 handleViewDetails(certificate)
                                             }
-                                            sx={{
-                                                backgroundColor: "#8CD813",
-                                                color: "#1e1e1e",
-                                                "&:hover": {
-                                                    backgroundColor: "#7bc310",
-                                                },
-                                            }}
-                                        >
-                                            View
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
+                                            title="View"
+                                        />
+                                    </td>
+                                </tr>
                             ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                        </tbody>
+                    </table>
+                </div>
             ) : (
                 <div className="flex flex-col items-center justify-center h-64">
                     <NoDataIcon />
@@ -250,111 +181,105 @@ export default function CertificatesPanel() {
                 </div>
             )}
 
-            <Dialog
-                open={openDialog}
-                onClose={handleCloseDialog}
-                PaperProps={{
-                    sx: {
-                        backgroundColor: "#2d2d2d",
-                        color: "#d9d9d9",
-                        minWidth: "500px",
-                    },
-                }}
-            >
-                {selectedCertificate && (
-                    <>
-                        <DialogTitle sx={{ color: "#8CD813" }}>
-                            Certificate Details
-                        </DialogTitle>
-                        <DialogContent>
-                            <div className="space-y-4 mt-2">
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        ID:
-                                    </p>
-                                    <p>{selectedCertificate.id}</p>
-                                </div>
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Title:
-                                    </p>
-                                    <p>
-                                        {selectedCertificate.certificateTheme}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Body:
-                                    </p>
-                                    <p>{selectedCertificate.certificateBody}</p>
-                                </div>
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Recipient IIN:
-                                    </p>
-                                    <p>{selectedCertificate.recipientIIN}</p>
-                                </div>
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Issuer IIN:
-                                    </p>
-                                    <p>{selectedCertificate.issuerIIN}</p>
-                                </div>
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Issuer Type:
-                                    </p>
-                                    <p>{selectedCertificate.issuerType}</p>
-                                </div>
-                                {selectedCertificate.organisationName && (
+            {/* Modal dialog */}
+            {openDialog && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-[#4d4d4d] backdrop-blur-xl rounded-lg border border-borderdefault p-5 w-fit max-h-[90vh] overflow-y-auto">
+                        {selectedCertificate && (
+                            <>
+                                <h2 className="text-green text-2xl font-bold">
+                                    Certificate Details
+                                </h2>
+                                <div className="space-y-4 mt-2">
                                     <div>
-                                        <p className="text-green font-semibold">
-                                            Organisation Name:
+                                        <p className="text-green font-bold">
+                                            ID:
+                                        </p>
+                                        <p>{selectedCertificate.id}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-green font-bold">
+                                            Title:
                                         </p>
                                         <p>
                                             {
-                                                selectedCertificate.organisationName
+                                                selectedCertificate.certificateTheme
                                             }
                                         </p>
                                     </div>
-                                )}
-                                {selectedCertificate.BIN && (
                                     <div>
-                                        <p className="text-green font-semibold">
-                                            BIN:
+                                        <p className="text-green font-bold">
+                                            Body:
                                         </p>
-                                        <p>{selectedCertificate.BIN}</p>
+                                        <p>
+                                            {
+                                                selectedCertificate.certificateBody
+                                            }
+                                        </p>
                                     </div>
-                                )}
-                                <div>
-                                    <p className="text-green font-semibold">
-                                        Date of Issue:
-                                    </p>
-                                    <p>
-                                        {new Date(
-                                            selectedCertificate.dateOfIssue
-                                        ).toLocaleString()}
-                                    </p>
+                                    <div>
+                                        <p className="text-green font-bold">
+                                            Recipient IIN:
+                                        </p>
+                                        <p>
+                                            {selectedCertificate.recipientIIN}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-green font-bold">
+                                            Issuer IIN:
+                                        </p>
+                                        <p>{selectedCertificate.issuerIIN}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-green font-bold">
+                                            Issuer Type:
+                                        </p>
+                                        <p>{selectedCertificate.issuerType}</p>
+                                    </div>
+                                    {selectedCertificate.organisationName && (
+                                        <div>
+                                            <p className="text-green font-bold">
+                                                Organisation Name:
+                                            </p>
+                                            <p>
+                                                {
+                                                    selectedCertificate.organisationName
+                                                }
+                                            </p>
+                                        </div>
+                                    )}
+                                    {selectedCertificate.BIN && (
+                                        <div>
+                                            <p className="text-green font-bold">
+                                                BIN:
+                                            </p>
+                                            <p>{selectedCertificate.BIN}</p>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <p className="text-green font-bold">
+                                            Date of Issue:
+                                        </p>
+                                        <p>
+                                            {new Date(
+                                                selectedCertificate.dateOfIssue
+                                            ).toLocaleString()}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={handleCloseDialog}
-                                sx={{
-                                    color: "#8CD813",
-                                    "&:hover": {
-                                        backgroundColor:
-                                            "rgba(140, 216, 19, 0.1)",
-                                    },
-                                }}
-                            >
-                                Close
-                            </Button>
-                        </DialogActions>
-                    </>
-                )}
-            </Dialog>
+
+                                <div className="flex justify-end">
+                                    <Button
+                                        onClick={handleCloseDialog}
+                                        title="Close"
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

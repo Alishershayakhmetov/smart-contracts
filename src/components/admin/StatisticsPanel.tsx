@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Grid, Paper, Typography, Box, CircularProgress } from "@mui/material";
+import NoDataIcon from "../icons/NoDataIcon";
 
 interface Statistics {
     totalUsers: number;
@@ -51,7 +51,7 @@ export default function StatisticsPanel() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <CircularProgress sx={{ color: "#8CD813" }} />
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green"></div>
             </div>
         );
     }
@@ -59,7 +59,7 @@ export default function StatisticsPanel() {
     if (error) {
         return (
             <div className="flex justify-center items-center h-64">
-                <Typography color="error">{error}</Typography>
+                <p className="text-red-500">{error}</p>
             </div>
         );
     }
@@ -67,85 +67,82 @@ export default function StatisticsPanel() {
     if (!statistics) {
         return (
             <div className="flex justify-center items-center h-64">
-                <Typography color="#d9d9d9">No statistics available</Typography>
+                <NoDataIcon />
+                <p>No statistics available</p>
             </div>
         );
     }
 
     return (
-        <Grid container spacing={3}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Summary Cards */}
-            <div>
-                <Paper
-                    elevation={3}
-                    sx={{
-                        p: 3,
-                        backgroundColor: "#2d2d2d",
-                        color: "#d9d9d9",
-                        height: "100%",
-                    }}
-                >
-                    <Typography variant="h6" sx={{ color: "#8CD813", mb: 2 }}>
-                        System Overview
-                    </Typography>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            mb: 2,
-                        }}
-                    >
-                        <Typography>Total Users:</Typography>
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            {statistics.totalUsers}
-                        </Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <Typography>Total Certificates:</Typography>
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            {statistics.totalCertificates}
-                        </Typography>
-                    </Box>
-                </Paper>
+            <div className="p-5 gap-5 rounded-lg shadow-md border border-borderdefault flex flex-col">
+                <h2 className="text-green text-xl font-bold">
+                    System Overview
+                </h2>
+                <div className="flex justify-between mb-3">
+                    <p>Total Users:</p>
+                    <p className="font-bold">{statistics.totalUsers}</p>
+                </div>
+                <div className="flex justify-between">
+                    <p>Total Certificates:</p>
+                    <p className="font-bold">{statistics.totalCertificates}</p>
+                </div>
             </div>
 
             {/* Monthly Certificates */}
-            <div>
-                <Paper
-                    elevation={3}
-                    sx={{
-                        p: 3,
-                        backgroundColor: "#2d2d2d",
-                        color: "#d9d9d9",
-                        height: "100%",
-                    }}
-                >
-                    <Typography variant="h6" sx={{ color: "#8CD813", mb: 2 }}>
-                        Certificates by Month
-                    </Typography>
-                    <div className="space-y-2">
-                        {statistics.certificatesByMonth.map((item, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                }}
-                            >
-                                <Typography>{item.month}</Typography>
-                                <Typography sx={{ fontWeight: "bold" }}>
-                                    {item.count}
-                                </Typography>
-                            </Box>
+            <div className="p-5 rounded-lg shadow-md border border-borderdefault flex flex-col gap-5">
+                <h2 className="text-green text-xl font-bold">
+                    Certificates by Month
+                </h2>
+                <div className="space-y-3">
+                    {statistics.certificatesByMonth.map((item, index) => (
+                        <div key={index} className="flex justify-between">
+                            <p>{item.month}</p>
+                            <p className="font-bold">{item.count}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Top Issuers */}
+            {statistics.topIssuers.length > 0 && (
+                <div className="flex flex-col gap-5 p-5 rounded-lg shadow-md border border-borderdefault">
+                    <h2 className="text-green text-xl font-bold">
+                        Top Certificate Issuers
+                    </h2>
+                    <div className="space-y-3">
+                        {statistics.topIssuers.map((issuer, index) => (
+                            <div key={index} className="flex justify-between">
+                                <p>{`${issuer.name} ${issuer.surname}`}</p>
+                                <p className="font-bold">{issuer.count}</p>
+                            </div>
                         ))}
                     </div>
-                </Paper>
-            </div>
-        </Grid>
+                </div>
+            )}
+
+            {/* Issuer Type Distribution */}
+            {statistics.issuerTypeDistribution.length > 0 && (
+                <div className="flex flex-col gap-5 p-5 rounded-lg shadow-md border border-borderdefault">
+                    <h2 className="text-green text-xl font-bold">
+                        Issuer Type Distribution
+                    </h2>
+                    <div className="space-y-3">
+                        {statistics.issuerTypeDistribution.map(
+                            (item, index) => (
+                                <div
+                                    key={index}
+                                    className="flex justify-between"
+                                >
+                                    <p>{item.type}</p>
+                                    <p className="font-bold">{item.count}</p>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }

@@ -175,7 +175,7 @@ export default function CertificateDetailPage() {
 
                 {/* Technical Details (for verification purposes) */}
                 <div className="border border-gray-700 rounded-lg p-6">
-                    <h2 className="text-xl font-semibold text-green mb-4">
+                    <h2 className="text-xl font-bold text-green mb-4">
                         Verification Details
                     </h2>
 

@@ -66,7 +66,7 @@ export default function AllUserCertificatesPage() {
                                 key={certificate.id}
                             >
                                 <div className="border border-gray-700 p-4 rounded-lg hover:border-green transition-colors">
-                                    <h3 className="text-xl font-semibold text-green">
+                                    <h3 className="text-xl font-bold text-green">
                                         {certificate.certificateTheme}
                                     </h3>
                                     <p className="text-gray-300">
