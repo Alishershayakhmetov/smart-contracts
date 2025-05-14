@@ -3,7 +3,7 @@ import Logo from "./icons/Logo";
 
 export default function Footer() {
     return (
-        <footer className="flex flex-col items-center py-5 gap-5 mt-24 mb-12 bg-[#4d4d4d10] rounded-lg border-[#444444] backdrop-blur-xl border-[3px] container mx-auto bottom-12">
+        <footer className="flex flex-col w-full items-center py-5 gap-5 mt-24 mb-12 bg-[#4d4d4d10] rounded-lg border-[#444444] backdrop-blur-xl border-[3px] container mx-auto bottom-12">
             <div className="flex gap-5">
                 <div className="self-center">
                     <Logo />

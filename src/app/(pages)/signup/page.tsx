@@ -147,7 +147,7 @@ export default function LoginPage() {
                     Already have an account?{" "}
                     <Link
                         href="/login"
-                        className="underline hover:text-gray-400"
+                        className="underline hover:text-tertiary"
                     >
                         Sign in
                     </Link>
