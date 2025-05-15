@@ -93,7 +93,7 @@ export default function CertificateDetailPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p className="text-tertiary">Recipient IIN</p>
-                            <p>
+                            <p className="select-all">
                                 {
                                     certificate.certificateDataFromDB
                                         ?.recipientIIN
@@ -102,7 +102,7 @@ export default function CertificateDetailPage() {
                         </div>
                         <div>
                             <p className="text-tertiary">Issuer IIN</p>
-                            <p>
+                            <p className="select-all">
                                 {certificate.certificateDataFromDB?.issuerIIN}
                             </p>
                         </div>
@@ -111,21 +111,22 @@ export default function CertificateDetailPage() {
                             "ORGANISATION" && (
                             <div>
                                 <p className="text-tertiary">Organisation</p>
-                                <p>
+                                <p className="select-all">
                                     {
                                         certificate.certificateDataFromDB
                                             ?.organisationName
                                     }
                                 </p>
-
                                 <p className="text-tertiary">BIN</p>
-                                <p>{certificate.certificateDataFromDB?.BIN}</p>
+                                <p className="select-all">
+                                    {certificate.certificateDataFromDB?.BIN}
+                                </p>
                             </div>
                         )}
 
                         <div>
                             <p className="text-tertiary">Date of Issue</p>
-                            <p>
+                            <p className="select-all">
                                 {new Date(
                                     certificate.certificateDataFromDB?.dateOfIssue!
                                 ).toLocaleDateString()}
@@ -133,10 +134,10 @@ export default function CertificateDetailPage() {
                         </div>
                     </div>
 
-                    <div className="mt-6">
-                        <p className="text-tertiary mb-2">Certificate Body</p>
-                        <div className="bg-gray-900 p-4 rounded">
-                            <p className="whitespace-pre-line">
+                    <div className="">
+                        <p className="text-tertiary">Certificate Body</p>
+                        <div className="p-5 border border-borderdefault rounded-lg">
+                            <p className="whitespace-pre-line text-justify">
                                 {
                                     certificate.certificateDataFromDB
                                         ?.certificateBody
@@ -147,65 +148,57 @@ export default function CertificateDetailPage() {
                 </div>
 
                 {/* Technical Details (for verification purposes) */}
-                <div className="border border-borderdefault rounded-lg p-6">
-                    <h2 className="text-xl font-bold text-green mb-4">
+                <div className="border-[3px] border-borderdefault rounded-lg p-5 flex flex-col gap-5">
+                    <h2 className="text-xl font-bold text-green">
                         Verification Details
                     </h2>
-
-                    <div className="space-y-4">
-                        <div>
-                            <p className="text-tertiary">
-                                Is Certificate Valid
-                            </p>
-                            <p className="font-mono break-all">
-                                {certificate.verification.issuerHash ===
-                                    certificate.verification
-                                        .smartContractIssuerHash &&
-                                certificate.verification.certificateHash ===
-                                    certificate.verification
-                                        .smartContractCertificateHash
-                                    ? "Valid"
-                                    : "Invalid"}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-tertiary">Certificate ID</p>
-                            <p className="font-mono break-all">{id}</p>
-                        </div>
-                        <div>
-                            <p className="text-tertiary">Issuer Hash</p>
-                            <p className="font-mono break-all">
-                                {certificate.verification.issuerHash}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-tertiary">Certificate Hash</p>
-                            <p className="font-mono break-all">
-                                {certificate.verification.certificateHash}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-tertiary">
-                                Issuer Hash From Smart-Contract
-                            </p>
-                            <p className="font-mono break-all">
-                                {
-                                    certificate.verification
-                                        .smartContractIssuerHash
-                                }
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-tertiary">
-                                Certificate Hash From Smart-Contract
-                            </p>
-                            <p className="font-mono break-all">
-                                {
-                                    certificate.verification
-                                        .smartContractCertificateHash
-                                }
-                            </p>
-                        </div>
+                    <div>
+                        <p className="text-tertiary">Is Certificate Valid</p>
+                        <p className="font-mono break-all">
+                            {certificate.verification.issuerHash ===
+                                certificate.verification
+                                    .smartContractIssuerHash &&
+                            certificate.verification.certificateHash ===
+                                certificate.verification
+                                    .smartContractCertificateHash
+                                ? "Valid"
+                                : "Invalid"}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-tertiary">Certificate ID</p>
+                        <p className="font-mono break-all select-all">{id}</p>
+                    </div>
+                    <div>
+                        <p className="text-tertiary">Issuer Hash</p>
+                        <p className="font-mono break-all select-all">
+                            {certificate.verification.issuerHash}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-tertiary">Certificate Hash</p>
+                        <p className="font-mono break-all select-all">
+                            {certificate.verification.certificateHash}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-tertiary">
+                            Issuer Hash From Smart-Contract
+                        </p>
+                        <p className="font-mono break-all select-all">
+                            {certificate.verification.smartContractIssuerHash}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-tertiary">
+                            Certificate Hash From Smart-Contract
+                        </p>
+                        <p className="font-mono break-all select-all">
+                            {
+                                certificate.verification
+                                    .smartContractCertificateHash
+                            }
+                        </p>
                     </div>
                 </div>
             </div>

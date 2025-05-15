@@ -11,7 +11,7 @@ const InputField: FC<Props> = ({ type, placeholder, value, onChange }) => {
     return (
         <input
             type={type}
-            className="w-full text-base text-white border border-borderdefault rounded-lg p-3 bg-transparent outline-none placeholder:text-tertiary"
+            className="w-full text-base text-white border border-borderdefault rounded-lg p-3 bg-transparent outline-none placeholder:text-tertiary focus:border-green"
             placeholder={placeholder}
             value={value}
             onChange={onChange}

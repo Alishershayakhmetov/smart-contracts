@@ -1,15 +1,11 @@
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import Button from "@/components/Button";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FC } from "react";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import { useState, useRef, useEffect, FC } from "react";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import ProfileIcon from "./icons/ProfileIcon";
+import ButtonWithIcon from "./ButtonWithIcon";
 
 type Props = {
     name: string;
@@ -18,21 +14,37 @@ type Props = {
 const ProfileDropdown: FC<Props> = ({ name }) => {
     const router = useRouter();
     const { data: session } = useSession();
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const open = Boolean(anchorEl);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                menuRef.current &&
+                buttonRef.current &&
+                !menuRef.current.contains(event.target as Node) &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setIsMenuOpen(false);
+            }
+        };
 
-    const handleClose = () => {
-        setAnchorEl(null);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleClick = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
 
     const handleProfileClick = () => {
         setOpenModal(true);
-        handleClose();
+        setIsMenuOpen(false);
     };
 
     const handleCloseModal = () => {
@@ -50,112 +62,94 @@ const ProfileDropdown: FC<Props> = ({ name }) => {
     };
 
     return (
-        <div>
-            <Button
-                id="basic-button"
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
+        <div className="relative">
+            <ButtonWithIcon
                 onClick={handleClick}
-                className="p-3 text-textGray bg-green rounded-lg border-[#444444] border cursor-pointer"
-            >
-                {name}
-            </Button>
+                title={name}
+                icon={<ProfileIcon />}
+            />
 
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    "aria-labelledby": "basic-button",
-                }}
-            >
-                <MenuItem onClick={handleProfileClick}>
-                    Profile details
-                </MenuItem>
-                <MenuItem
-                    onClick={() => {
-                        router.push("/certificates");
-                        handleClose();
-                    }}
+            {isMenuOpen && (
+                <div
+                    ref={menuRef}
+                    className="absolute right-0 w-full bg-[#4d4d4d10] backdrop-blur-xl rounded-lg z-10 flex flex-col pt-2.5 pb-2.5"
                 >
-                    Certificates
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>Log out</MenuItem>
-            </Menu>
+                    <ul className="flex flex-col gap-2.5 items-center w-full">
+                        <li
+                            className="cursor-pointer w-fit hover:text-green"
+                            onClick={handleProfileClick}
+                        >
+                            Profile details
+                        </li>
+                        <li
+                            className="cursor-pointer hover:text-green"
+                            onClick={() => {
+                                router.push("/certificates");
+                                setIsMenuOpen(false);
+                            }}
+                        >
+                            Certificates
+                        </li>
+                        <li
+                            className="cursor-pointer hover:text-green"
+                            onClick={handleLogout}
+                        >
+                            Log out
+                        </li>
+                    </ul>
+                </div>
+            )}
 
-            {modal(openModal, handleCloseModal, session)}
+            {openModal && renderModal(openModal, handleCloseModal, session)}
         </div>
     );
 };
 
 export default ProfileDropdown;
 
-function modal(
+function renderModal(
     openModal: boolean,
     handleCloseModal: () => void,
     session: Session | null
 ) {
-    // Modal style
-    const modalStyle = {
-        position: "absolute" as "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        gap: 100,
-        width: 400,
-        bgcolor: "background.paper",
-        color: "black",
-        boxShadow: 24,
-        p: 5,
-        borderRadius: 2,
-    };
+    if (!openModal) return null;
 
     return (
-        <Modal
-            open={openModal}
-            onClose={handleCloseModal}
-            aria-labelledby="profile-modal-title"
-            aria-describedby="profile-modal-description"
-        >
-            <Box sx={modalStyle}>
+        <>
+            {/* Modal backdrop */}
+            <div className="fixed inset-0 z-40" onClick={handleCloseModal} />
+
+            {/* Modal content */}
+            <div className="flex flex-col items-center gap-5 fixed top-1/2 transform left-1/2 -translate-x-1/2 bg-[#4d4d4d10] backdrop-blur-xl border border-borderdefault rounded-lg p-5 w-[400px] z-10">
                 <h2 className="text-2xl text-green font-bold">
                     Profile details
                 </h2>
+
                 {session?.user && (
-                    <Box>
-                        <div className="flex flex-col">
-                            <span className="text-green font-bold text-base">
+                    <>
+                        <div className="flex flex-col w-full">
+                            <span className="text-green font-bold">
                                 Your name
                             </span>
-                            <span className="text-base border border-borderdefault rounded-lg p-3">
+                            <span className="border border-borderdefault rounded-lg p-3">
                                 {session.user.name}
                             </span>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-green font-bold text-base">
+                        <div className="flex flex-col w-full">
+                            <span className="text-green font-bold">
                                 Your email
                             </span>
-                            <span className="text-base border border-borderdefault rounded-lg p-3">
+                            <span className="border border-borderdefault rounded-lg p-3">
                                 {session.user.email}
                             </span>
                         </div>
-                        {/* Add more fields as needed */}
-                    </Box>
+                    </>
                 )}
 
-                <Box mt={3} display="flex" justifyContent="flex-end">
-                    <Button
-                        variant="contained"
-                        onClick={handleCloseModal}
-                        sx={{ mt: 2 }}
-                        className="p-3 text-textGray bg-green rounded-lg border-[#444444] border cursor-pointer"
-                    >
-                        Close
-                    </Button>
-                </Box>
-            </Box>
-        </Modal>
+                <div className="flex justify-end">
+                    <Button title="Close" onClick={handleCloseModal} />
+                </div>
+            </div>
+        </>
     );
 }

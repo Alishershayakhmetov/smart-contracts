@@ -8,7 +8,7 @@ type Props = {
 
 const Button: FC<Props> = ({onClick, title}) => {
     return (
-        <button onClick={onClick} className="p-3 text-textGray bg-green rounded-lg border-borderdefault hover:bg-lime-900 hover:text-white border cursor-pointer">
+        <button onClick={onClick} className="p-3 text-textGray bg-green rounded-lg border-borderdefault hover:bg-[#92f100] border cursor-pointer">
             {title}
         </button>
     );

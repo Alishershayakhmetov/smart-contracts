@@ -142,37 +142,42 @@ export default function AllUserCertificatesPage() {
                     Your Certificates
                 </h1>
             </div>
-            <Image
-                src={CertsBG}
-                alt="bg"
-                className="absolute left-1/2 -translate-x-1/2 top-[270px] -z-10"
-            />
 
-            {isLoading && CertificatesLoading()}
+            {/* Background image only shows after loading is complete */}
+            {!isLoading && (
+                <Image
+                    src={CertsBG}
+                    alt="bg"
+                    className="absolute left-1/2 -translate-x-1/2 top-[270px] -z-10"
+                    priority={false}
+                />
+            )}
 
-            <article className="flex justify-between gap-12 container">
-                {isLoading ? (
-                    <div className="text-center">Loading certificates...</div>
-                ) : certificates.length === 0 ? (
-                    <div className="flex flex-col gap-5 items-center">
-                        <NoDataIcon />
-                        <h2 className="font-bold text-green text-center text-2xl">
-                            No certificates found.
-                        </h2>
-                    </div>
-                ) : (
-                    <>
-                        {renderCertificateList(
-                            receivedCertificates,
-                            "Received by you"
-                        )}
-                        {renderCertificateList(
-                            createdCertificates,
-                            "Created by you"
-                        )}
-                    </>
-                )}
-            </article>
+            {isLoading ? (
+                <CertificatesLoading />
+            ) : (
+                <article className="flex justify-between gap-12 container">
+                    {certificates.length === 0 ? (
+                        <div className="flex flex-col gap-5 items-center">
+                            <NoDataIcon />
+                            <h2 className="font-bold text-green text-center text-2xl">
+                                No certificates found.
+                            </h2>
+                        </div>
+                    ) : (
+                        <>
+                            {renderCertificateList(
+                                receivedCertificates,
+                                "Received by you"
+                            )}
+                            {renderCertificateList(
+                                createdCertificates,
+                                "Created by you"
+                            )}
+                        </>
+                    )}
+                </article>
+            )}
         </main>
     );
 }
