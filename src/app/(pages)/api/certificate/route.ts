@@ -20,7 +20,6 @@ export async function POST(req: Request) {
       BIN,
       certificateTheme,
       certificateBody,
-      dateOfIssue
     } = await req.json();
 
     // Validate users first
@@ -49,7 +48,7 @@ export async function POST(req: Request) {
       BIN,
       certificateTheme,
       certificateBody,
-      dateOfIssue
+      dateOfIssue: (new Date()).toString()
     });
 
     // Transaction wrapper

@@ -34,7 +34,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          isAdmin: user.isAdmin
         };
       }
     })
@@ -45,6 +46,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.name = user.name!;
         token.email = user.email!;
+        token.isAdmin = user.isAdmin;
       }
       return token;
     },
@@ -52,7 +54,8 @@ export const authOptions: NextAuthOptions = {
         session.user = {
             id: token.id,
             name: token.name,
-            email: token.email
+            email: token.email,
+            isAdmin: token.isAdmin
         };
       return session;
     },
