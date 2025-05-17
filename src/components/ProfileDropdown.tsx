@@ -77,6 +77,15 @@ const ProfileDropdown: FC<Props> = ({ name }) => {
                     <ul className="flex flex-col gap-2.5 items-center w-full">
                         <li
                             className="cursor-pointer w-fit hover:text-green"
+                            onClick={() => {
+                                router.push("/admin");
+                                setIsMenuOpen(false);
+                            }}
+                        >
+                            Admin dashboard
+                        </li>
+                        <li
+                            className="cursor-pointer w-fit hover:text-green"
                             onClick={handleProfileClick}
                         >
                             Profile details
