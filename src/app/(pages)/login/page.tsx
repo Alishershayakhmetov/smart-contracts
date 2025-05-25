@@ -1,12 +1,16 @@
 "use client";
-import { Alert, Snackbar } from "@mui/material";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import InputField from "../../../components/InputField";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Button from "../../../components/Button";
+import { Alert, Snackbar } from "@mui/material";
+import InputField from "../../../components/InputField";
 import BigLogo from "@/components/icons/BigLogo";
+
+// Regex pattern for email
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const IIN_REGEX = /^\d{12}$/;
 
 export default function LoginPage() {
     const router = useRouter();
@@ -43,6 +47,18 @@ export default function LoginPage() {
 
         if (!email || !password) {
             setError("Please fill in all fields");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (!EMAIL_REGEX.test(email)) {
+            setError("Please enter a valid email address");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (!IIN_REGEX.test(password)) {
+            setError("Password must be a valid IIN consisting of 12 digits");
             setOpenSnackbar(true);
             return;
         }

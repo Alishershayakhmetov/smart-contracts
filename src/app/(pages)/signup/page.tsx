@@ -8,6 +8,10 @@ import BigLogo from "@/components/icons/BigLogo";
 import InputField from "@/components/InputField";
 import Button from "@/components/Button";
 
+// Regex patterns
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const IIN_REGEX = /^\d{12}$/;
+
 export default function LoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -42,6 +46,18 @@ export default function LoginPage() {
             return;
         }
 
+        if (!EMAIL_REGEX.test(email)) {
+            setError("Please enter a valid email address");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (!IIN_REGEX.test(IIN)) {
+            setError("IIN must be exactly 12 digits");
+            setOpenSnackbar(true);
+            return;
+        }
+
         if (password.length < 6) {
             setError("Password must be at least 6 characters");
             setOpenSnackbar(true);
@@ -57,14 +73,13 @@ export default function LoginPage() {
                 IIN,
             });
 
-            if (response.status !== 200) {
-                throw new Error(response.data || "Registration failed");
+            if (response.status === 200) {
+                router.push(
+                    "/login?success=Registration successful! Please sign in"
+                );
+            } else {
+                throw new Error(response.data.error || "Registration failed");
             }
-
-            // Redirect to login with success message
-            router.push(
-                "/login?success=Registration successful! Please sign in"
-            );
         } catch (err) {
             const errorMessage =
                 err instanceof Error ? err.message : "Registration failed";
